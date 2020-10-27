@@ -14,6 +14,7 @@ public class PlacePhone extends Phone {
     @ManyToOne
     @JoinColumn(name = "place_id")
     private Place place;
+    private String name;
 
 
 
