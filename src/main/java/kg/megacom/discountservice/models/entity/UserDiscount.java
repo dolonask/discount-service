@@ -1,6 +1,5 @@
 package kg.megacom.discountservice.models.entity;
 
-import com.sun.org.apache.bcel.internal.generic.LNEG;
 import lombok.Data;
 
 import javax.persistence.*;

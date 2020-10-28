@@ -1,6 +1,5 @@
 package kg.megacom.discountservice.models.entity;
 
-import com.sun.xml.bind.v2.model.core.ID;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -20,6 +19,7 @@ public class Discount {
     private Date endDate;
 
     private boolean active;
+
     @ManyToOne
     @JoinColumn(name = "place_id")
     private Place place;

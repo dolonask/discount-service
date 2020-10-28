@@ -1,5 +1,6 @@
 package kg.megacom.discountservice.models.entity;
 
+import kg.megacom.discountservice.models.enums.Role;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -20,8 +21,7 @@ public class User {
     @JoinColumn(name = "account")
     private Account account;
 
-    @OneToOne
-    @JoinColumn(name = "role_id")
+    @Enumerated(value = EnumType.STRING)
     private Role role;
 
     private String qr;

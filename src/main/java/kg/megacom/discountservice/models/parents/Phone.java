@@ -1,4 +1,4 @@
-package kg.megacom.discountservice.models.entity.parents;
+package kg.megacom.discountservice.models.parents;
 
 import lombok.Data;
 

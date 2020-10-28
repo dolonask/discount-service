@@ -1,6 +1,6 @@
 package kg.megacom.discountservice.models.entity;
 
-import kg.megacom.discountservice.models.entity.parents.Phone;
+import kg.megacom.discountservice.models.parents.Phone;
 import lombok.Data;
 
 import javax.persistence.Entity;
