@@ -10,4 +10,5 @@ import java.util.List;
 public interface PlacePhoneRep extends JpaRepository<PlacePhone,Long> {
 
     List<PlacePhone> findAllByPlace_Id(Long id);
+    boolean existsByPhone(String phone);
 }

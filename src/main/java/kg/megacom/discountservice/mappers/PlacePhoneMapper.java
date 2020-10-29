@@ -16,4 +16,6 @@ public interface PlacePhoneMapper {
     List<PlacePhone> toPlacePhoneList(List<PlacePhoneDto> placePhoneDtoList);
 
     List<PlacePhoneDto> toPlacePhoneDtoList(List<PlacePhone> placePhoneList);
+
+
 }

@@ -31,17 +31,22 @@ public class PlacePhoneServiceImpl implements PlacePhoneService {
     @Override
     public List<PlacePhoneDto> updatePlacePhones(List<PlacePhoneDto> placePhoneDtoList, Place place) {
         List<PlacePhone> placePhones = placePhoneRep.findAllByPlace_Id(place.getId());
-        placePhoneDtoList.removeIf(p->placePhones.contains(p.getPhone()));
-        List<PlacePhone> newPlacePhoneList = placePhoneDtoList.stream().filter(p->!placePhones.contains(p.getPhone())).map(p->{
-            PlacePhone placePhone = new PlacePhone();
-            placePhone.setPhone(p.getPhone());
-            placePhone.setPlace(place);
-            return placePhone;
-        }).collect(Collectors.toList());
-         newPlacePhoneList.addAll(placePhones);
-         newPlacePhoneList = placePhoneRep.saveAll(newPlacePhoneList);
-        return PlacePhoneMapper.INSTANCE.toPlacePhoneDtoList(newPlacePhoneList);
-    }
+        placePhones.removeIf(p->placePhoneDtoList.contains(p.getPhone()));
+        if (placePhones!=null) placePhoneRep.deleteAll(placePhones);
+        placePhones = PlacePhoneMapper.INSTANCE.toPlacePhoneList(placePhoneDtoList);
+        placePhones = placePhones.stream()
+                .filter(p->!placePhoneRep.existsByPhone(p.getPhone()))
+                .peek(p->{
+                    p.setPlace(place);
+                    placePhoneRep.save(p);
+                }).collect(Collectors.toList());
+        return PlacePhoneMapper.INSTANCE.toPlacePhoneDtoList(placePhones);
+
+
+
+
+        }
+
 
     @Override
     public List<PlacePhone> findAllByPlaceIds(List<Place> placeList) {

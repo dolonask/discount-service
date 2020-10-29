@@ -27,7 +27,8 @@ public class PlaceController {
     public Response deletePlace(@RequestParam Long id){
     return placeService.deactivatePlace(id);
     }
-    @GetMapping
+
+    @GetMapping("/getByActivity")
     public Response getAllByActive(@RequestParam boolean active){
         return placeService.getAllByActive(active);
     }
