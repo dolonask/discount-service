@@ -26,18 +26,40 @@ public class DiscountServiceImpl implements DiscountService {
         Discount discount = DiscountMapper.INSTANCE.toDiscount(discountDto);
 
         if (discount.getId()==null) {
-            Discount actualDiscount = discountRep.findByActiveAndPlace(true, discount.getPlace());
-            if (actualDiscount != null) {
-                actualDiscount.setActive(false);
-                discountRep.save(actualDiscount);
+            List<Discount> actualDiscounts= discountRep.findAllByActiveIsTrueAndPlace(discount.getPlace());
+            if (actualDiscounts.size()==0) {
+               discount =  discountRep.save(discount);
+               response.setObject(discount);
+               return response;
+            }
+            for (Discount d: actualDiscounts
+                 ) {
+                if (d.getStartDate().getTime()<=discount.getStartDate().getTime() & d.getEndDate().getTime()<=discount.getEndDate().getTime()){
+                   return closeDiscountAndSave(d,discount);
+                }else if (d.getStartDate().getTime()>=discount.getStartDate().getTime() & d.getEndDate().getTime()>=discount.getEndDate().getTime()){
+                    return  closeDiscountAndSave(d,discount);
+                }else if (d.getStartDate().getTime()<=discount.getStartDate().getTime()&d.getEndDate().getTime()>=discount.getEndDate().getTime()){
+                    return closeDiscountAndSave(d,discount);
+                }else if (d.getStartDate().getTime()>=discount.getStartDate().getTime() & d.getEndDate().getTime()<=discount.getEndDate().getTime()){
+                    return closeDiscountAndSave(d,discount);
+                }
+            }
             }
             discount = discountRep.save(discount);
-        }else {
-            discount =discountRep.save(discount);
-        }
-        response.setObject(discount);
+
+            response.setObject(discount);
 
         return response;
+    }
+
+    private Response closeDiscountAndSave(Discount d, Discount discount) {
+        Response response = Response.getResponse();
+        d.setActive(false);
+        discountRep.save(d);
+        discount =discountRep.save(discount);
+        response.setObject(discount);
+        return response;
+
     }
 
     @Override

@@ -13,4 +13,6 @@ public interface DiscountRep extends JpaRepository<Discount,Long> {
     Discount findByActiveAndPlace(boolean active,Place place);
     Discount findByActiveIsTrueAndId(Long id);
     List<Discount> findAllByActive( boolean active);
+
+    List<Discount> findAllByActiveIsTrueAndPlace(Place place);
 }
