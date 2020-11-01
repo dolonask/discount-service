@@ -34,7 +34,7 @@ public class DiscountController {
         return  discountService.getDiscount(id);
     }
 
-    @GetMapping
+    @GetMapping("/getByActivity")
     public Response getAllDiscountsByActive(@RequestParam boolean active){
         return discountService.getAllByActivity(active);
     }

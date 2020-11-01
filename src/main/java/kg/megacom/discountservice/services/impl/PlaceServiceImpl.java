@@ -14,11 +14,12 @@ import kg.megacom.discountservice.services.PlacePhoneService;
 import kg.megacom.discountservice.services.PlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
+@Transactional
 public class PlaceServiceImpl implements PlaceService {
 
     @Autowired
@@ -33,18 +34,19 @@ public class PlaceServiceImpl implements PlaceService {
     public Response save(PlaceAppDto placeAppDto) {
 
         Response response = Response.getResponse();
-            AddressDto addressDto = new AddressDto();
-            addressDto.setHouse(placeAppDto.getHouse());
-            addressDto.setStreet(placeAppDto.getStreet());
+
+            AddressDto addressDto = AddressMapper.INSTANCE.placeAppDtoToAddressDto(placeAppDto);
+
             addressDto = addressService.save(addressDto);
-            Place place = new Place();
-            place.setName(placeAppDto.getName());
-            place.setActive(placeAppDto.isActive());
-            place.setAddress(AddressMapper.INSTANCE.toAddress(addressDto));
-            place.setQr(UUID.randomUUID().toString());
+
+            Place place = PlaceMapper.INSTANCE.placeAppDtoToPlace(placeAppDto,addressDto);
+
             place = placeRep.save(place);
+
             List<PlacePhoneDto> placePhoneDtoList = placePhoneService.save(placeAppDto.getPlacePhoneList(), place);
+
             placeAppDto = PlaceMapper.INSTANCE.toPlaceAppDto(place, placePhoneDtoList);
+
             response.setObject(placeAppDto);
 
 

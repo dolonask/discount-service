@@ -6,8 +6,10 @@ import kg.megacom.discountservice.models.dto.AddressDto;
 import kg.megacom.discountservice.services.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class AddressServiceImpl implements AddressService {
 
     @Autowired

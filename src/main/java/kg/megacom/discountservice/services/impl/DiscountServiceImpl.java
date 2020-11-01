@@ -8,11 +8,14 @@ import kg.megacom.discountservice.models.responses.Response;
 import kg.megacom.discountservice.services.DiscountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
+@Transactional
 public class DiscountServiceImpl implements DiscountService {
 
     @Autowired
@@ -23,49 +26,39 @@ public class DiscountServiceImpl implements DiscountService {
 
         Response response = Response.getResponse();
 
-        Discount discount = DiscountMapper.INSTANCE.toDiscount(discountDto);
+        Discount newDiscount = DiscountMapper.INSTANCE.toDiscount(discountDto);
 
-        if (discount.getId()==null) {
-            List<Discount> actualDiscounts= discountRep.findAllByActiveIsTrueAndPlace(discount.getPlace());
-            if (actualDiscounts.size()==0) {
-               discount =  discountRep.save(discount);
-               response.setObject(discount);
-               return response;
-            }
-            for (Discount d: actualDiscounts
-                 ) {
-                if (d.getStartDate().getTime()<=discount.getStartDate().getTime() & d.getEndDate().getTime()<=discount.getEndDate().getTime()){
-                   return closeDiscountAndSave(d,discount);
-                }else if (d.getStartDate().getTime()>=discount.getStartDate().getTime() & d.getEndDate().getTime()>=discount.getEndDate().getTime()){
-                    return  closeDiscountAndSave(d,discount);
-                }else if (d.getStartDate().getTime()<=discount.getStartDate().getTime()&d.getEndDate().getTime()>=discount.getEndDate().getTime()){
-                    return closeDiscountAndSave(d,discount);
-                }else if (d.getStartDate().getTime()>=discount.getStartDate().getTime() & d.getEndDate().getTime()<=discount.getEndDate().getTime()){
-                    return closeDiscountAndSave(d,discount);
-                }
-            }
-            }
-            discount = discountRep.save(discount);
+      List<Discount> currDiscounts = discountRep.findAllByActiveIsTrueAndPlace(newDiscount.getPlace());
 
-            response.setObject(discount);
+      if (!currDiscounts.isEmpty()) {
+          currDiscounts.stream()
+                  .filter(x -> (discountDto.getStartDate().after(x.getStartDate()) && discountDto.getStartDate().before(x.getEndDate()))
+                          || (discountDto.getEndDate().after(x.getStartDate()) && discountDto.getEndDate().before(x.getEndDate()))
+                          || (x.getStartDate().after(discountDto.getStartDate()) && x.getStartDate().before(discountDto.getEndDate()))
+                          || (x.getEndDate().after(discountDto.getStartDate()) && x.getEndDate().before(discountDto.getEndDate())))
+                  .peek(x -> {
+                      x.setActive(false);
+                      discountRep.save(x);
+                  })
+                  .collect(Collectors.toList());
+      }
+      newDiscount = discountRep.save(newDiscount);
+            response.setObject(DiscountMapper.INSTANCE.toDiscountDto(newDiscount));
 
         return response;
     }
 
-    private Response closeDiscountAndSave(Discount d, Discount discount) {
-        Response response = Response.getResponse();
-        d.setActive(false);
-        discountRep.save(d);
-        discount =discountRep.save(discount);
-        response.setObject(discount);
-        return response;
 
-    }
 
     @Override
     public Response deactivateDiscount(Long id) {
         Response response = Response.getResponse();
         Discount discountForDeactivation  = discountRep.findByActiveIsTrueAndId(id);
+        if (discountForDeactivation == null){
+            response.setStatus(404);
+            response.setMessage("Скидка отсутствует");
+            return response;
+        }
         discountForDeactivation.setActive(false);
         discountForDeactivation = discountRep.save(discountForDeactivation);
         response.setObject(DiscountMapper.INSTANCE.toDiscountDto(discountForDeactivation));
@@ -89,6 +82,10 @@ public class DiscountServiceImpl implements DiscountService {
     public Response getAllByActivity(boolean active) {
         Response response = Response.getResponse();
         List<Discount> discountList = discountRep.findAllByActive(active);
+        if (discountList.isEmpty()){
+            response.setStatus(0);
+            response.setMessage("На данный момент нет скидок");
+        }
         response.setObject(DiscountMapper.INSTANCE.toDiscountDtoList(discountList));
         return response;
     }
