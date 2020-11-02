@@ -3,6 +3,7 @@ package kg.megacom.discountservice.mappers;
 import kg.megacom.discountservice.models.appDto.PlaceAppDto;
 import kg.megacom.discountservice.models.dto.AddressDto;
 import kg.megacom.discountservice.models.dto.PlacePhoneDto;
+import kg.megacom.discountservice.models.entity.Address;
 import kg.megacom.discountservice.models.entity.Place;
 import kg.megacom.discountservice.models.entity.PlacePhone;
 import org.mapstruct.Mapper;
@@ -30,8 +31,7 @@ public interface PlaceMapper {
     PlaceAppDto toPlaceAppDto(Place place, List<PlacePhoneDto> placePhoneDtoList);
 
     default List<PlaceAppDto> toAppPlaceDto(List<PlacePhone> placePhoneList){
-       List<PlaceAppDto> placeAppDtos = new ArrayList<>();
-        placeAppDtos = placePhoneList.stream().map(x-> {
+        List<PlaceAppDto> placeAppDtos = placePhoneList.stream().map(x-> {
             PlaceAppDto placeApp = new PlaceAppDto();
             placeApp.setHouse(x.getPlace().getAddress().getHouse());
             placeApp.setActive(x.getPlace().isActive());
