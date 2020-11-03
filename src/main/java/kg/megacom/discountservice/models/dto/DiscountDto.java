@@ -22,6 +22,12 @@ public class DiscountDto {
     @Future
     private Date endDate;
 
+    private double lifeTime;
+
+    private int dayAmount;
+    private int monthAmount;
+    private int  couponAmount;
+
     private boolean active;
 
     private PlaceDto place;

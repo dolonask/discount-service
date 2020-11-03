@@ -18,6 +18,12 @@ public class Discount {
     private Date startDate;
     private Date endDate;
 
+    private double lifeTime;
+
+    private int dayAmount;
+    private int monthAmount;
+    private int couponAmount;
+
     private boolean active;
 
     @ManyToOne

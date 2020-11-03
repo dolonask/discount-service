@@ -89,4 +89,10 @@ public class DiscountServiceImpl implements DiscountService {
         response.setObject(DiscountMapper.INSTANCE.toDiscountDtoList(discountList));
         return response;
     }
+
+    @Override
+    public DiscountDto getDiscountById(Long discountId) {
+        Discount discount = discountRep.findById(discountId).orElse(null);
+        return DiscountMapper.INSTANCE.toDiscountDto(discount);
+    }
 }

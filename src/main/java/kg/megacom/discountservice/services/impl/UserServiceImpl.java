@@ -59,4 +59,10 @@ public class UserServiceImpl implements UserService {
 
         return response;
     }
+
+    @Override
+    public UserDto getUserById(Long id) {
+        User user = userRep.findById(id).orElse(null);
+        return UserMapper.INSTANCE.toUserDto(user);
+    }
 }

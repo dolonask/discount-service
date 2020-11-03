@@ -11,4 +11,6 @@ public interface DiscountService {
     Response getDiscount(Long id);
 
     Response getAllByActivity(boolean active);
+
+    DiscountDto getDiscountById(Long discountId);
 }
