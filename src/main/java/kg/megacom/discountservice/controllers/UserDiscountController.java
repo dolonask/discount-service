@@ -13,8 +13,12 @@ public class UserDiscountController {
     @Autowired
     private UserDiscountService userDiscountService;
 
-    @GetMapping("/getDiscount")
+    @GetMapping("/get")
     public Response getDiscountOfUser(@RequestParam Long userId, @RequestParam Long discountId){
         return userDiscountService.getUserDiscount(userId,discountId);
+    }
+    @GetMapping("/check")
+    public Response checkDiscount(@RequestParam Long userDiscountId){
+        return userDiscountService.checkUserDiscount(userDiscountId);
     }
 }

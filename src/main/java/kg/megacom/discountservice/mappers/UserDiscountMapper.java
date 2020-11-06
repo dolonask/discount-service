@@ -10,6 +10,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Date;
+import java.util.List;
 
 @Mapper
 public interface UserDiscountMapper {
@@ -26,4 +27,5 @@ public interface UserDiscountMapper {
         userDiscount.setDiscountStatus(DiscountStatus.CREATED);
         return userDiscount;
     }
+    List<UserDiscountDto> toUserDiscountDtoList(List<UserDiscount> userDiscountList);
 }
